@@ -6,13 +6,10 @@
 PHONY_TARGETS := # Empty variable
 MUFFLED_TARGETS := # Empty variable
 
-# Sets VERSION and VENV_DIR if not defined
-VERSION		?= us
+VERSION		?= us# Only when env not set
 VENV_DIR	?= .venv
-# For disambiguation/escaping of characters
-comma		:= ,
-# Allows DEBUG to unmuffle targets which can't use .SILENT
-muffle 		:= $(if $(DEBUG),,@)
+comma		:= ,# For escaping a literal comma
+muffle 		:= $(if $(DEBUG),,@)# Allows DEBUG to unmuffle targets which can't use .SILENT
 
 # Utility functions
 rwildcard	= $(subst //,/,$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d)))
@@ -117,7 +114,6 @@ new_list_shared_src_files = $(foreach dir,$(SRC_DIR)/$(1),$(wildcard $(dir)/*.c)
 define new_link
 	$(muffle)$(call echo,Linking $1,optional)
 	$(muffle)$(LD) $(LD_FLAGS) -o $(2) \
-		$(call if_version,pspeu,--gc-sections) \
 		-Map $(BUILD_DIR)/$(1).map \
 		-T $(BUILD_DIR)/$(subst _fix,,$1).ld \
 		$(call if_version,pspeu,-T $(CONFIG_DIR)/symexport.$(VERSION).$(1).txt) \
@@ -128,7 +124,7 @@ endef
 define get_merged_functions 
 	$(shell $(PYTHON) -c 'import yaml;\
 	import os;\
-	yaml_file=open(os.path.join(os.getcwd(),"config/splat.$(VERSION).$(2)$(1).yaml"));\
+	yaml_file=open("config/splat.$(VERSION).$(2)$(1).yaml");\
 	config = yaml.safe_load(yaml_file); yaml_file.close();\
 	c_subsegments = [x for x in config["segments"][1]["subsegments"] if type(x) == list and x[1] == "c"];\
 	merged_functions = [x[2].split("/")[1] for x in c_subsegments if str(x[2]).startswith("$(1)/")];\
@@ -144,8 +140,6 @@ get_ovl_from_path = $(word $(or $2,1),$(filter $(call get_targets),$(subst /, ,$
 ### End new header ###
 
 ### Begin old header ###
-WHICH_PYTHON	:= $(SYSTEM_PYTHON)
-
 # Directories
 DISK_DIR        := $(BUILD_DIR)/${VERSION}/disk
 
