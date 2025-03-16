@@ -7,7 +7,7 @@ PHONY_TARGETS := # Empty variable
 MUFFLED_TARGETS := # Empty variable
 
 VERSION		?= us# Only when env not set
-VENV_DIR	?= .venv
+VENV_DIR	?= .venv# Can be overriden with env
 comma		:= ,# For escaping a literal comma
 muffle 		:= $(if $(DEBUG),,@)# Allows DEBUG to unmuffle targets which can't use .SILENT
 
@@ -106,11 +106,6 @@ define new_list_src_files
 endef
 new_list_shared_src_files = $(foreach dir,$(SRC_DIR)/$(1),$(wildcard $(dir)/*.c))
 
-# leverages MWCC ability to compile data and text as separate sections to allow
-# LD using --gc-sections and remove all the symbols that are unreferenced.
-# symexport.*.txt is used to enforce a specific symbol and all its dependencies
-# to be used. Refer to *.map to know which sections are being discarded by LD.
-# Use nm to retrieve the symbol name out of a object file such as the mwo_header.
 define new_link
 	$(muffle)$(call echo,Linking $1,optional)
 	$(muffle)$(LD) $(LD_FLAGS) -o $(2) \
@@ -138,8 +133,7 @@ get_build_dirs = $(subst //,/,$(addsuffix /,$(addprefix $(BUILD_DIR)/,$1)))
 add_ovl_prefix = $(if $(filter $(call to_lower,$1),$(STAGES)),$(call to_lower,$(or $2,st)$1),$(if $(filter $(call to_lower,$1),$(BOSSES)),$(call to_lower,$(or $3,bo)$1),$(call to_lower,$1)))
 get_ovl_from_path = $(word $(or $2,1),$(filter $(call get_targets),$(subst /, ,$1)))
 ### End new header ###
-
-### Begin old header ###
+### Start old header, to be removed when all targets have been transitioned ##
 # Directories
 DISK_DIR        := $(BUILD_DIR)/${VERSION}/disk
 
@@ -481,6 +475,7 @@ $(VENV_DIR):
 $(VENV_DIR)/bin:
 	$(call echo,Creating python virtual environment) $(SYSTEM_PYTHON) -m venv $(VENV_DIR)
 	$(PIP) install -r $(TOOLS_DIR)/requirements-python.txt && echo "Build environment has changed due to venv install, please restart Make" && exit 1
+# python-dependencies left for CI compatibility, but requirement-python is more in line with what it targets
 python-dependencies: requirements-python
 requirements-python: | $(VENV_DIR)
 	$(PIP) install -r $(TOOLS_DIR)/requirements-python.txt
