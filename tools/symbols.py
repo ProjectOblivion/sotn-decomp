@@ -446,7 +446,7 @@ if __name__ == "__main__":
         if args.version == None:
             args.version = "us"
     if args.command == "sort":
-        sort("config/")
+        sort(f"config/{args.version}/symbols/")
     elif args.command == "cross":
         cross(args.ref, args.to_cross)
     elif args.command == "remove-orphans":
