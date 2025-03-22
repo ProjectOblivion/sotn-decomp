@@ -1,6 +1,7 @@
 AS              := $(BIN_DIR)/allegrex-as
 AS_FLAGS        += -EL -I include/ -G0 -march=allegrex -mabi=eabi
-OPT_HI_FUNCS	:= $(addsuffix .c.o,33F0 A710 C0B0 EC60 186E8 61F30 624DC 628AC 63C90 64EE0) # These objects will get -O4,p instead of -Op
+OPT_HI_FUNCS	:= 80 1E50 33F0 A710 C0B0 EC60 F4D0 13BD0 186E8 61F30 624DC 628AC 62FE0 63C90 64EE0# Split to two lines for readability
+OPT_HI_FUNCS	:= $(addsuffix .c.o, $(OPT_HI_FUNCS))# These objects will get -O4,p instead of -Op
 COMPILER		 = $(SOTNSTR) process -f $< | $(PYTHON) $(MWCCGAP_APP)
 COMPILER_REQS	:= $(MWCCPSP) $(MWCCGAP_APP) | $(VENV_DIR)/bin
 COMPILER_ARGS	 = $@ --src-dir $(dir $<) --mwcc-path $(MWCCPSP) --use-wibo --wibo-path $(WIBO) --as-path $(AS) --asm-dir-prefix asm/pspeu --target-encoding sjis --macro-inc-path include/macro.inc $(MWCCPSP_FLAGS) $(OPT_LEVEL) -opt nointrinsics
@@ -28,12 +29,13 @@ $(BUILD_DIR:$(VERSION)=pspeu)/assets/%/mwo_header.bin.o: assets/%/mwo_header.bin
 
 # Step 2/5 of build
 # Todo: This monstrosity of a target should probably be revised, but it works for now
-$(addprefix $(BUILD_DIR:$(VERSION)=pspeu)/,$(addsuffix .elf,$(filter-out main,$(GAME)))): $(BUILD_DIR)/%.elf: $(BUILD_DIR)/%.ld $$(call get_functions,%) $$(call get_o_files,%_psp) $$(if $$(filter-out dra,%),$(BUILD_DIR)/assets/%/mwo_header.bin.o)
+$(addprefix $(BUILD_DIR:$(VERSION)=pspeu)/,$(addsuffix .elf,$(filter-out main,$(GAME)))): $(BUILD_DIR)/%.elf: $(BUILD_DIR)/%.ld $$(call get_merged_o_files,%) $$(call get_o_files,%_psp) $$(if $$(filter-out dra,%),$(BUILD_DIR)/assets/%/mwo_header.bin.o)
 	$(call link,$*,$@)
-$(BUILD_DIR:$(VERSION)=pspeu)/st%.elf: $(BUILD_DIR)/st%.ld $$(call get_functions,%,st) $$(call get_o_files,st/%_psp) $(BUILD_DIR)/assets/st/%/mwo_header.bin.o
+$(BUILD_DIR:$(VERSION)=pspeu)/st%.elf: $(BUILD_DIR)/st%.ld $$(call get_merged_o_files,%,st) $$(call get_o_files,st/%_psp) $(BUILD_DIR)/assets/st/%/mwo_header.bin.o
 	$(call link,st$*,$@)
-$(BUILD_DIR:$(VERSION)=pspeu)/bo%.elf: $(BUILD_DIR)/bo%.ld $$(call get_functions,%,bo) $$(call get_o_files,boss/%_psp) $(BUILD_DIR)/assets/boss/%/mwo_header.bin.o
+$(BUILD_DIR:$(VERSION)=pspeu)/bo%.elf: $(BUILD_DIR)/bo%.ld $$(call get_merged_o_files,%,bo) $$(call get_o_files,boss/%_psp) $(BUILD_DIR)/assets/boss/%/mwo_header.bin.o
 	$(call link,st$*,$@)
+# All servant files are merged
 $(BUILD_DIR:$(VERSION)=pspeu)/tt_%.elf: $(BUILD_DIR)/tt_%.ld $$(call get_o_files,servant/tt_$$*) $(BUILD_DIR)/assets/servant/tt_%/mwo_header.bin.o
 	$(call link,tt_$*,$@)
 

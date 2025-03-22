@@ -41,7 +41,7 @@ CONFIG_DIR      := config/$(VERSION)
 SYMBOLS_DIR		:= $(CONFIG_DIR)/symbols
 TOOLS_DIR       := tools
 BUILD_DIR       := build/$(VERSION)
-PY_TOOLS_DIRS	:= $(TOOLS_DIR)/ $(addprefix $(TOOLS_DIR)/,splat_ext/ split_jpt_yaml/ sotn_str/ sotn_permuter/permuter_loader)
+PY_TOOLS_DIRS	:= $(TOOLS_DIR)/ $(addprefix $(TOOLS_DIR)/,splat_ext/ split_jpt_yaml/ sotn_permuter/permuter_loader)
 RETAIL_DISK_DIR := disks
 EXTRACTED_DISK_DIR := $(RETAIL_DISK_DIR)/$(VERSION)
 BUILD_DISK_DIR  := $(BUILD_DIR)/disk
@@ -76,12 +76,12 @@ CYGNUS			:= $(BIN_DIR)/cygnus-2.7-96Q3-bin
 CC1_SATURN		:= $(BUILD_DIR)/CC1.EXE
 
 # Symbols
-BASE_SYMBOLS	 = $(if $(filter mad,%),$(SYMBOLS_DIR)/symbols.beta.txt,$(SYMBOLS_DIR)/symbols.$(VERSION).txt)
+BASE_SYMBOLS	 = $(SYMBOLS_DIR)/symbols.$(if $(filter mad,$(1)),beta,$(VERSION)).txt
 
 # Other tooling
 BLACK			:= $(and $(PYTHON_BIN),$(PYTHON_BIN)/)black
 SPLAT           := $(and $(PYTHON_BIN),$(PYTHON_BIN)/)splat split
-SOTNSTR         := $(PYTHON) $(TOOLS_DIR)/sotn_str/sotn_str.py
+SOTNSTR         := $(TOOLS_DIR)/sotn_str/target/release/sotn_str
 ICONV           := iconv --from-code=UTF-8 --to-code=Shift-JIS
 DIRT_PATCHER    := $(PYTHON) $(TOOLS_DIR)/dirt_patcher.py
 SHASUM          := shasum
@@ -140,12 +140,10 @@ define get_conf_merged
 	print(" ".join(merged_functions))')
 endef
 get_auto_merge = $(addsuffix .o,$(wildcard $(subst _psp,,$(filter-out $(wildcard src/$(2)/$(1)_psp/*.c),src/$(2)/$(1)_psp/$(AUTO_MERGE_FILES)))))
-#from branch#get_functions = $(addprefix $(BUILD_DIR)/src/$(2)/$(1)/,$(addsuffix .c.o,$(call get_merged_functions,$(1),$(2))))
 get_merged_o_files = $(addprefix $(BUILD_DIR)/src/$(2)/$(1)/,$(addsuffix .c.o,$(call get_conf_merged,$(1),$(2)))) $(addprefix $(BUILD_DIR)/,$(call get_auto_merge,$(1),$(2)))
 get_build_dirs = $(subst //,/,$(addsuffix /,$(addprefix $(BUILD_DIR)/,$(1))))
 get_ovl_from_path = $(word $(or $(2),1),$(filter $(call get_targets),$(subst /, ,$(1))))
-add_ovl_prefix = $(if $(filter $(1),$(STAGES)),$(or $(2),st),$(if $(filter $(1),$(BOSSES)),$(or $(3),bo)))$(1)
-#from branch#add_ovl_prefix = $(if $(filter $(call to_lower,$(1)),$(STAGES)),$(or $(2),st),$(if $(filter $(call to_lower,$(1)),$(BOSSES)),$(or $(3),bo)))$(call to_lower,$(1))
+add_ovl_prefix = $(if $(filter $(call to_lower,$(1)),$(STAGES)),$(or $(2),st),$(if $(filter $(call to_lower,$(1)),$(BOSSES)),$(or $(3),bo)))$(call to_lower,$(1))
 
 ifneq ($(filter $(VERSION),us hd),) # Both us and hd versions use the PSX platform
 include Makefile.psx.mk
@@ -257,12 +255,12 @@ format-tools: $(addprefix FORMAT_,$(PY_TOOLS_DIRS))
 $(addprefix FORMAT_,$(PY_TOOLS_DIRS)): FORMAT_%: | $(VENV_DIR)/bin
 	$(call echo,Formatting $**.py) $(BLACK) $**.py
 
-format-symbols: format-symbols_$(VERSION) $(addprefix FORMAT_,$(FORMAT_SYMBOLS_FILES))
+format-symbols: $(addprefix format-symbols_,us pspeu hd saturn) $(addprefix FORMAT_,$(FORMAT_SYMBOLS_FILES))
 	rm $@.run > /dev/null 2>&1 || true
 format-symbols.run:
 	rm $@ > /dev/null 2>&1 || true
 	$(call echo,Removing orphan symbols using splat configs)
-format-symbols_$(VERSION): format-symbols_%: | $(VENV_DIR)/bin
+$(addprefix format-symbols_,us pspeu hd saturn): format-symbols_%: | $(VENV_DIR)/bin
 	$(call echo,Sorting $* symbols) VERSION=$* $(PYTHON) $(TOOLS_DIR)/symbols.py sort
 $(addprefix FORMAT_,$(FORMAT_SYMBOLS_FILES)): FORMAT_%: format-symbols.run | $(VENV_DIR)/bin
 	echo "$*" >> format-symbols.run
