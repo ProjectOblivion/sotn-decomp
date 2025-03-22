@@ -146,12 +146,12 @@ typedef enum {
 // PSP buttons use same order as PSX, rather than by
 // value for logical conistency between the two
 typedef enum {
-    BUTTON_COUNT = 8,
     PAD_COUNT = 2,
     PAD_NONE = 0x0000,
 // R3 button on a DS3 controller attached to PSP
 // for debug mode may not be captured in these
 #ifdef VERSION_PSP
+    BUTTON_COUNT = 7,
     PAD_L2 = 0x0002,
     PAD_R2 = 0x0400,
     PAD_L1 = 0x0100,
@@ -169,6 +169,7 @@ typedef enum {
     PAD_DOWN = 0x0040,
     PAD_LEFT = 0x0080,
 #else
+    BUTTON_COUNT = 8,
     PAD_L2 = 0x0001,
     PAD_R2 = 0x0002,
     PAD_L1 = 0x0004,
@@ -199,9 +200,11 @@ typedef enum {
 // PSP allows you to do the Wolf Charge spell with either square or circle.
 // This was changed from PS1, which only accepts square.
 #define WOLF_CHARGE_ATK_BTN (PAD_SQUARE | PAD_CIRCLE)
+#define BTN_MIST (PAD_L1 | PAD_R1)
 #else
 #define BTN_WOLF PAD_R2
 #define WOLF_CHARGE_ATK_BTN (PAD_SQUARE)
+#define BTN_MIST PAD_L1
 #endif
 
 #define MAX_PRIM_COUNT 0x500
@@ -402,16 +405,21 @@ typedef enum {
 // same as above, but it processes a single character from CPP
 #define CH(x) ((x) - 0x20)
 
+// print buttons on screen using the 8x8 font
+#define CIRCLE 0xE8
+#define CROSS 0xE9
+#define SQUARE 0xEA
+#define TRIANGLE 0xEB
+
 #define DEMO_KEY_LEN 3
 #define DEMO_MAX_LEN 0x2000
 
-#define FONT_W 8                 // small font size used for dialogues and menu
-#define FONT_H 8                 // small font size used for dialogues and menu
-#define FONT_GAP FONT_W          // gap between the beginning of two letters
-#define FONT_SPACE 4             // gap for the space character
-#define MENUCHAR(x) ((x) - 0x20) // 8x8 characters are ASCII offset by 0x20
-#define DIAG_EOL 0xFF            // end of line
-#define DIAG_EOS 0x00            // end of string
+#define FONT_W 8        // small font size used for dialogues and menu
+#define FONT_H 8        // small font size used for dialogues and menu
+#define FONT_GAP FONT_W // gap between the beginning of two letters
+#define FONT_SPACE 4    // gap for the space character
+#define DIAG_EOL 0xFF   // end of line
+#define DIAG_EOS 0x00   // end of string
 
 // entityId: what entity to spawn based on the Entity Set
 // amount: How many entities to spawn in total
@@ -463,7 +471,9 @@ enum BlueprintKind {
 #define CARD_BLOCK_SIZE (8192)
 
 typedef struct {
+#ifndef VERSION_PSP
     /* 0x000 */ struct DIRENTRY entries[BLOCK_PER_CARD];
+#endif
     /* 0x258 */ u32 unk258;
     /* 0x25C */ u32 unk25C;
     /* 0x260 */ u32 nBlockUsed;
@@ -473,7 +483,7 @@ typedef struct {
 
 #if defined(VERSION_US)
 #define MEMCARD_ID "BASLUS-00067DRAX00"
-#elif defined(VERSION_HD)
+#else
 #define MEMCARD_ID "BISLPM-86023DRAX00"
 #endif
 
@@ -1168,10 +1178,10 @@ typedef struct {
     /* 0x00 */ u8 Magic[2];
     /* 0x02 */ u8 Type;
     /* 0x03 */ u8 BlockEntry;
-    /* 0x04 */ u8 Title[64];
+    /* 0x04 */ char Title[64];
     /* 0x44 */ u8 reserve[28];
     /* 0x60 */ u8 Clut[32];
-    /* 0x80 */ u8 Icon[3][128];
+    /* 0x80 */ u8 Icon[3 * 128];
 } MemcardHeader; /* size=0x200 */
 
 typedef struct {
@@ -1341,7 +1351,7 @@ typedef enum {
 
 typedef struct Collider {
     /* 0x00 */ u32 effects;
-    /* 0x04 */ s32 unk4;
+    /* 0x04 */ s32 unk4; // possibly an x offset
     /* 0x08 */ s32 unk8;
     /* 0x0C */ s32 unkC;
     /* 0x10 */ s32 unk10;
@@ -1802,7 +1812,7 @@ typedef struct {
     /* 80072EF0 */ s32 padHeld;
     /* 80072EF4 */ u32 padSim; // simulate input to force player actions
     /* 80072EF8 */ s32 D_80072EF8;
-    /* 80072EFC */ s32 D_80072EFC; // stun timer
+    /* 80072EFC */ s32 demo_timer; // player frozen timer
     /* 80072F00 */ s16 timers[16]; /// Indexed with AluTimers
 
     // 0x01: touching the ground
@@ -1814,7 +1824,7 @@ typedef struct {
     // 0x1000: standing on a slightly ascending or descending slope
     // 0x4000: standing on a raising slope
     // 0x8000: standing on any slope
-    /* 80072F20 */ s32 pl_vram_flag;
+    /* 80072F20 */ s32 vram_flag;
 
     /* 80072F24 */ s32 unk04; // copy of the previous field
     /* 80072F28 */ s32 unk08;
@@ -1833,11 +1843,15 @@ typedef struct {
     /* 80072F58 */ s32 unk38;
     /* 80072F5C */ s32 unk3C;
     /* 80072F60 */ u16 unk40;
-    /* 80072F62 */ u16 pl_high_jump_timer;
+    /* 80072F62 */ u16 high_jump_timer;
     /* 80072F64 */ u16 unk44;
     /* 80072F66 */ u16 unk46;
     /* 80072F68 */ u16 unk48;
+#ifdef VERSION_PSP
+    /* 80072F6A */ u16 unk4A;
+#else
     /* 80072F6A */ s16 unk4A;
+#endif
     /* 80072F6C */ u16 unk4C;
     /* 80072F6E */ u16 unk4E;
     /* 80072F70 */ u16 prev_step;
@@ -1899,7 +1913,6 @@ extern s32 D_8003925C;
 extern s32 g_IsTimeAttackUnlocked;
 
 extern s32 D_8003C0EC[4];
-extern s32 D_8003C0F8;
 extern s32 D_8003C100;
 extern u16 g_ClutIds[]; // array of palette VRAM offsets
 extern s32 g_CutsceneHasControl;

@@ -20,7 +20,7 @@ wget		= wget -a wget-$(or $(3),$(2),$(1)).log $(if $(2),-O $(2) )$(1)
 get_targets = $(GAME) $(addprefix $(if $(1),st),$(STAGES)) $(addprefix $(if $(1),bo),$(BOSSES)) $(SERVANTS)
 
 # System related variables
-OS 				:= $(subst Darwin,MacOS,$(shell uname -s))
+OS 				:= $(subst Darwin,macOS,$(shell uname -s))
 SYSTEM_PYTHON	:= $(or $(shell which python),/usr/bin/python3)# Only used for installing venv
 PYTHON_BIN		:= $(or $(realpath $(VENV_DIR)/bin/))
 PYTHON          := $(and $(PYTHON_BIN),$(PYTHON_BIN)/)python3# This is slightly redundant to handle the slash
@@ -47,7 +47,8 @@ EXTRACTED_DISK_DIR := $(RETAIL_DISK_DIR)/$(VERSION)
 BUILD_DISK_DIR  := $(BUILD_DIR)/disk
 
 # Files
-UNDEFINED_SYMS 	 = $(SYMBOLS_DIR)/undefined_syms.$(if $(filter stmad,$(1)),beta,$(VERSION)).txt
+UNDEFINED_SYMS 	 = undefined_syms.$(if $(filter stmad,$(1)),beta,$(VERSION)).txt
+AUTO_UNDEFINED	 = TYPE_auto$(if $(filter-out stmad,$(1)),.$(VERSION)).$(1).txt
 CHECK_FILES 	:= $(shell cut -d' ' -f3 $(CONFIG_DIR)/check.$(VERSION).sha)
 ST_ASSETS		:= D_801*.bin *.gfxbin *.palbin cutscene_*.bin
 CLEAN_FILES		:= $(ASSETS_DIR) $(ASM_DIR) $(BUILD_DIR) $(SRC_DIR)/weapon $(CONFIG_DIR) function_calls sotn_calltree.txt
@@ -105,7 +106,7 @@ SOTNDISK_DIR	:= $(TOOLS_DIR)/sotn-disk/
 SOTNDISK        := $(GOPATH)/bin/sotn-disk
 SOTNASSETS_DIR  := $(TOOLS_DIR)/sotn-assets/
 SOTNASSETS      := $(GOPATH)/bin/sotn-assets
-
+ 
 # Build functions
 define get_src_files
 	$(foreach dir,$(ASM_DIR)/$(1)/ $(addprefix $(ASM_DIR)/$(1)/,$(ASM_SUBDIRS)),$(wildcard $(dir)/*.s))
@@ -122,14 +123,14 @@ define link
 		-Map $(BUILD_DIR)/$(or $(4),$(1)).map \
 		-T $(BUILD_DIR)/$(or $(5),$(1)).ld \
 		$(call if_version,pspeu,-T $(SYMBOLS_DIR)/symexport.$(VERSION).$(1).txt) \
-		$(if $(wildcard $(UNDEFINED_SYMS)),-T $(UNDEFINED_SYMS)) \
-		$(if $(wildcard $(SYMBOLS_DIR)/undefined_syms_auto.$(VERSION).$(1).txt),-T $(SYMBOLS_DIR)/undefined_syms_auto.$(VERSION).$(1).txt) \
-		$(if $(wildcard $(SYMBOLS_DIR)/undefined_funcs_auto.$(VERSION).$(1).txt),-T $(SYMBOLS_DIR)/undefined_funcs_auto.$(VERSION).$(1).txt) \
+		$(if $(wildcard $(SYMBOLS_DIR)/$(UNDEFINED_SYMS)),-T $(SYMBOLS_DIR)/$(UNDEFINED_SYMS)) \
+		$(if $(wildcard $(SYMBOLS_DIR)/$(AUTO_UNDEFINED:TYPE%=undefined_syms%)),-T $(SYMBOLS_DIR)/$(AUTO_UNDEFINED:TYPE%=undefined_syms%)) \
+		$(if $(wildcard $(SYMBOLS_DIR)/$(AUTO_UNDEFINED:TYPE%=undefined_funcs%)),-T $(SYMBOLS_DIR)/$(AUTO_UNDEFINED:TYPE%=undefined_funcs%)) \
 		$(call if_version,saturn,-T $(BASE_SYMBOLS)) \
 		$(call if_version,saturn,-T $(SYMBOLS_DIR)/symbols.saturn.$(1).txt) \
 		$(3)
 endef
-define get_merged_functions 
+define get_conf_merged
 	$(shell $(PYTHON) -c 'import yaml;\
 	import os;\
 	yaml_file=open("$(CONFIG_DIR)/splat.$(VERSION).$(2)$(1).yaml");\
@@ -138,10 +139,13 @@ define get_merged_functions
 	merged_functions = [x[2].split("/")[1] for x in c_subsegments if str(x[2]).startswith("$(1)/")];\
 	print(" ".join(merged_functions))')
 endef
-get_functions = $(addprefix $(BUILD_DIR)/src/$(2)/$(1)/,$(addsuffix .c.o,$(call get_merged_functions,$(1),$(2))))
+get_auto_merge = $(addsuffix .o,$(wildcard $(subst _psp,,$(filter-out $(wildcard src/$(2)/$(1)_psp/*.c),src/$(2)/$(1)_psp/$(AUTO_MERGE_FILES)))))
+#from branch#get_functions = $(addprefix $(BUILD_DIR)/src/$(2)/$(1)/,$(addsuffix .c.o,$(call get_merged_functions,$(1),$(2))))
+get_merged_o_files = $(addprefix $(BUILD_DIR)/src/$(2)/$(1)/,$(addsuffix .c.o,$(call get_conf_merged,$(1),$(2)))) $(addprefix $(BUILD_DIR)/,$(call get_auto_merge,$(1),$(2)))
 get_build_dirs = $(subst //,/,$(addsuffix /,$(addprefix $(BUILD_DIR)/,$(1))))
 get_ovl_from_path = $(word $(or $(2),1),$(filter $(call get_targets),$(subst /, ,$(1))))
-add_ovl_prefix = $(if $(filter $(call to_lower,$(1)),$(STAGES)),$(or $(2),st),$(if $(filter $(call to_lower,$(1)),$(BOSSES)),$(or $(3),bo)))$(call to_lower,$(1))
+add_ovl_prefix = $(if $(filter $(1),$(STAGES)),$(or $(2),st),$(if $(filter $(1),$(BOSSES)),$(or $(3),bo)))$(1)
+#from branch#add_ovl_prefix = $(if $(filter $(call to_lower,$(1)),$(STAGES)),$(or $(2),st),$(if $(filter $(call to_lower,$(1)),$(BOSSES)),$(or $(3),bo)))$(call to_lower,$(1))
 
 ifneq ($(filter $(VERSION),us hd),) # Both us and hd versions use the PSX platform
 include Makefile.psx.mk
@@ -451,7 +455,7 @@ MUFFLED_TARGETS += $(PHONY_TARGETS) $(MASPSX_APP) $(MWCCGAP_APP) $(MWCCPSP) $(SA
 MUFFLED_TARGETS += $(DOSEMU_APP) $(ASMDIFFER) $(dir $(M2C_APP)) $(M2C_APP) $(PERMUTER_APP) $(SOTNDISK) $(SOTNASSETS) $(VENV_DIR) $(VENV_DIR)/bin
 .PHONY: $(PHONY_TARGETS)
 # Specifying .SILENT in this manner allows us to set the DEBUG environment variable and display everything for debugging
-$(DEBUG).SILENT: $(MUFFLED_TARGETS)# Not muffled: dump-disk_% $(BIN_DIR)/%.tar.gz $(M2CTX_APP) Muffled in target: $(BIN_DIR)/% $(GO) $(WIBO)
+#$(DEBUG).SILENT: $(MUFFLED_TARGETS)
 # These are walls of text, so they're redirected to files instead of stdout for debugging
 get-debug: get-phony get-silent
 get-phony:

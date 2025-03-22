@@ -115,9 +115,9 @@ static const char* D_800A2D68[] = {
 };
 #endif
 
-u8 g_ChButtons[] = {0xEA, 0xE8, 0xE9, 0xEB, 0x32, 0x2C,
-                    0x32, 0x2C, 0x12, 0x11, 0x11, 0x12};
-u8 g_ChRgb[] = {MENUCHAR('R'), MENUCHAR('G'), MENUCHAR('B')};
+u8 g_ChButtons[] = {SQUARE,  CIRCLE,  CROSS,   TRIANGLE, CH('R'), CH('L'),
+                    CH('R'), CH('L'), CH('2'), CH('1'),  CH('1'), CH('2')};
+u8 g_ChRgb[] = {CH('R'), CH('G'), CH('B')};
 u8 D_800A2D80[] = {0x00, 0x20, 0x30, 0x40, 0x50, 0x60, 0x69, 0x70,
                    0x75, 0x78, 0x7A, 0x7C, 0x7D, 0x7E, 0x7F, 0x80};
 
@@ -1933,24 +1933,24 @@ void DrawConsumableCount(s32 itemId, s32 hand, MenuContext* ctx) {
         equipCount = g_Status.equipHandCount[itemId];
         str_idx = &outstring;
         // First character in the string is the (
-        *str_idx++ = MENUCHAR('(');
+        *str_idx++ = CH('(');
         // This is now how many you have.
         displayCount = equipCount + 1;
         if (displayCount < 10) {
             // Get the character code for the count.
-            *str_idx++ = equipCount + 1 + MENUCHAR('0');
+            *str_idx++ = equipCount + 1 + CH('0');
         } else {
             if (displayCount == 100) {
-                *str_idx++ = MENUCHAR('1');
+                *str_idx++ = CH('1');
                 // Neat trick, set this to 0 so following two steps draw
                 // 00
                 displayCount = 0;
             }
-            *str_idx++ = (displayCount / 10) + MENUCHAR('0');
-            *str_idx++ = (displayCount % 10) + MENUCHAR('0');
+            *str_idx++ = (displayCount / 10) + CH('0');
+            *str_idx++ = (displayCount % 10) + CH('0');
         }
         // Finish off with a ) and string terminator
-        *str_idx++ = MENUCHAR(')');
+        *str_idx++ = CH(')');
         *str_idx++ = 0xFF;
         *str_idx++ = 0;
         // Draw it after the item name. X=224, Y = 30 + 13*hand
@@ -2312,7 +2312,7 @@ void func_800F98AC(const char* str, u32 arg1) {
 #if defined(VERSION_US)
 void func_800F99B8(const char* str, s32 arg1, s32 arg2) {
     // See src/st/blit_char.h
-    const u16 MINSCODE = 0x8140;
+    const u16 DOUBLE_SPACE = 0x8140;
     const u16 RIGHT_DOUBLE_QUOTATION_MARK = 0x8168;
 
     const int FontWidth = 12;
@@ -2362,7 +2362,7 @@ void func_800F99B8(const char* str, s32 arg1, s32 arg2) {
         } else if ('A' <= var_s0 && var_s0 <= 'Z') {
             var_a0 = var_s0 + 0x821F;
         } else if (var_s0 == ' ') {
-            var_a0 = MINSCODE;
+            var_a0 = DOUBLE_SPACE;
             var_s2 = 2;
         } else {
             // load var_a0 as a big-endian value corresponding with shift-jis
@@ -2371,7 +2371,7 @@ void func_800F99B8(const char* str, s32 arg1, s32 arg2) {
             if (var_a0 == RIGHT_DOUBLE_QUOTATION_MARK) {
                 var_s1 += 2;
             }
-            if (var_a0 == MINSCODE) {
+            if (var_a0 == DOUBLE_SPACE) {
                 var_s0 = ' ';
                 var_s2 = 2;
             }

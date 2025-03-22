@@ -153,6 +153,16 @@ enum SfxModes {
     0x343 // Narrator says "Akumajo Dracula X Gekka no Yasoukyoku"
 
 // japanese voice actor messages
+#ifdef VERSION_PSP
+#define JP_VO_FUKAMI_RIKA_MESSAGE 0x342      // Message from Fukami Rika
+#define JP_VO_SHIINA_HEKIRU_MESSAGE 0x343    // Message from Shiina Hekiru
+#define JP_VO_YANADA_KIYOYUKI_MESSAGE 0x344  // Message from Yanada Kiyoyuki
+#define JP_VO_OKIAYU_RYOUTAROU_MESSAGE 0x345 // Message from Okiayu Ryoutarou
+#define JP_VO_SATOU_MASAHARU_MESSAGE 0x346   // Message from Satou Masaharu
+#define JP_VO_WAKAMOTO_NORIO_MESSAGE 0x347   // Message from Wakamoto Norio
+#define JP_VO_YOKOYAMA_CHISA_MESSAGE 0x348   // Message from Yokoyama Chisa
+#define JP_VO_YANAMI_JYOUJI_MESSAGE 0x349    // Message from Yanami Jyouji
+#else
 #define JP_VO_FUKAMI_RIKA_MESSAGE 0x344      // Message from Fukami Rika
 #define JP_VO_SHIINA_HEKIRU_MESSAGE 0x345    // Message from Shiina Hekiru
 #define JP_VO_YANADA_KIYOYUKI_MESSAGE 0x346  // Message from Yanada Kiyoyuki
@@ -161,6 +171,7 @@ enum SfxModes {
 #define JP_VO_WAKAMOTO_NORIO_MESSAGE 0x349   // Message from Wakamoto Norio
 #define JP_VO_YOKOYAMA_CHISA_MESSAGE 0x34A   // Message from Yokoyama Chisa
 #define JP_VO_YANAMI_JYOUJI_MESSAGE 0x34B    // Message from Yanami Jyouji
+#endif
 
 // various voice actors saying konami
 #define JP_VO_KONAMI_1 0x34C  // woman says konami
@@ -181,13 +192,15 @@ enum SfxModes {
 #define NA_VO_DR_IT_WAS_NOT 0x359  // Dracula says "It was not by my hand ..."
 #define NA_VO_RI_TRIBUTE 0x35A     // Richter says "Tribute? ..."
 
-#define NA_VO_AL_INTERESTED 0x3A9 // Alucard says "I'm interested in this"
 #if defined(VERSION_PSP)
-#define NA_VO_ML_THANKS 0x3AB // Master Librarian says "Thank you"
+#define NA_VO_AL_INTERESTED 0x3A7 // Alucard says "I'm interested in this"
+#define NA_VO_ML_THANKS 0x3AB     // Master Librarian says "Thank you"
+#define NA_VO_ML_FAREWELL 0x3B0   // Master Librarian says "Farewell for now"
 #else
-#define NA_VO_ML_THANKS 0x3AD // Master Librarian says "Thank you"
+#define NA_VO_AL_INTERESTED 0x3A9 // Alucard says "I'm interested in this"
+#define NA_VO_ML_THANKS 0x3AD     // Master Librarian says "Thank you"
+#define NA_VO_ML_FAREWELL 0x3B2   // Master Librarian says "Farewell for now"
 #endif
-#define NA_VO_ML_FAREWELL 0x3B2 // Master Librarian says "Farewell for now"
 
 #if defined(VERSION_US)
 #define NA_VO_MA_IF_YOU_WEAR                                                   \

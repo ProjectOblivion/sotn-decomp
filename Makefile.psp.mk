@@ -6,6 +6,7 @@ COMPILER_REQS	:= $(MWCCPSP) $(MWCCGAP_APP) | $(VENV_DIR)/bin
 COMPILER_ARGS	 = $@ --src-dir $(dir $<) --mwcc-path $(MWCCPSP) --use-wibo --wibo-path $(WIBO) --as-path $(AS) --asm-dir-prefix asm/pspeu --target-encoding sjis --macro-inc-path include/macro.inc $(MWCCPSP_FLAGS) $(OPT_LEVEL) -opt nointrinsics
 OPT_LEVEL		 = $(if $(filter $(notdir $@),$(OPT_HI_FUNCS)),-O4$(comma)p,-Op)
 LD_FLAGS 		:= --gc-sections
+AUTO_MERGE_FILES	:= e_init.c
 
 # Step 1/2 of extract
 $(BUILD_DIR:$(VERSION)=pspeu)/%.ld: $(CONFIG_DIR)/splat.$(VERSION).%.yaml $(BASE_SYMBOLS) $(SYMBOLS_DIR)/symbols.$(VERSION).%.txt | $(EXTRACTED_DISK_DIR) $(VENV_DIR)/bin
