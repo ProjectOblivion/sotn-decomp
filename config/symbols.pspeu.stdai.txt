@@ -204,3 +204,4 @@ g_LayoutObjPosHorizontal = 0x09297008;
 g_LayoutObjVertical = 0x09297010;
 g_LayoutObjHorizontal = 0x09297018;
 DAI_cutscene_script = 0x092970C0;
+g_CutsceneFlags = 0x09297888;
