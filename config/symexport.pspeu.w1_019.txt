@@ -1,0 +1,2 @@
+EXTERN(_binary_assets_weapon_w1_019_mwo_header_bin_start);
+EXTERN(W1_019_Load);

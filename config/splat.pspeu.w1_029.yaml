@@ -1,0 +1,50 @@
+options:
+  platform: psp
+  basename: w1_029
+  base_path: ..
+  build_path: build/pspeu
+  target_path: disks/pspeu/PSP_GAME/USRDIR/res/ps/PSPBIN/w1_029.bin
+  asm_path: asm/pspeu/weapon/w1_029_psp
+  asset_path: assets/weapon/w1_029
+  src_path: src/weapon
+  ld_script_path: build/pspeu/w1_029.ld
+  compiler: GCC
+  symbol_addrs_path:
+    - config/symbols.pspeu.txt
+    - config/symbols.pspeu.w1_029.txt
+  undefined_funcs_auto_path: config/undefined_funcs_auto.pspeu.w1_029.txt
+  undefined_syms_auto_path: config/undefined_syms_auto.pspeu.w1_029.txt
+  find_file_boundaries: true
+  use_legacy_include_asm: false
+  migrate_rodata_to_functions: true
+  asm_jtbl_label_macro: jlabel
+  symbol_name_format: pspeu_$VRAM
+  disassemble_all: true
+  section_order:
+    - .text
+    - .data
+    - .rodata
+    - .bss
+  ld_bss_is_noload: true
+  disasm_unknown: true
+  global_vram_start: 0x08000000
+  ld_generate_symbol_per_data_segment: true
+  asm_inc_header: |
+    .set noat      /* allow manual use of $at */
+    .set noreorder /* don't insert nops after branches */
+sha1: 254f0f226bf6596e5a950e4ab824aa3eab144c49
+segments:
+  - [0x0, bin, mwo_header]
+  - name: w1_029
+    type: code
+    start: 0x80
+    vram: 0x092F6C80
+    bss_start_address: 0x092FA100
+    bss_size: 0x600
+    align: 128
+    subalign: 8
+    subsegments:
+      - [0x80, c, psp/w1_029]
+      - [0x2580, data]
+      - [0x3500, bss]
+  - [0x3B00]
