@@ -1,0 +1,61 @@
+options:
+  platform: psx
+  basename: strdai
+  base_path: ..
+  build_path: build/us
+  target_path: disks/us/ST/RDAI/RDAI.BIN
+  asm_path: asm/us/st/rdai
+  asset_path: assets/st/rdai
+  src_path: src/st/rdai
+  ld_script_path: build/us/strdai.ld
+  compiler: GCC
+  symbol_addrs_path:
+    - config/symbols.us.txt
+    - config/symbols.us.strdai.txt
+  undefined_funcs_auto_path: config/undefined_funcs_auto.us.strdai.txt
+  undefined_syms_auto_path: config/undefined_syms_auto.us.strdai.txt
+  find_file_boundaries: true
+  use_legacy_include_asm: false
+  migrate_rodata_to_functions: true
+  asm_jtbl_label_macro: jlabel
+  symbol_name_format: us_$VRAM
+  section_order:
+    - .data
+    - .rodata
+    - .text
+    - .bss
+    - .sbss
+  ld_bss_is_noload: false
+  disasm_unknown: true
+  disassemble_all: true
+  global_vram_start: 0x80010000
+sha1: c54bbcd0487da88c927feb9b91c515e1db0918e8
+segments:
+  - name: strdai
+    type: code
+    start: 0
+    vram:  0x80180000
+    align: 4
+    subalign: 4
+    subsegments:
+      - [0x0, data]
+      - [0x30FF8, .rodata, us]
+      - [0x31380, c, us] # e_room_bg
+      # - [0x31448, c, us] # e_lock_camera
+      # - [0x31604, c, us]
+      # - [0x3462C, c, us] # st_update
+      # - [0x34A60, c, us] # collision
+      # - [0x3621C, c, us] # create_entity
+      # - [0x36D94, c, us] # e_red_door
+      # - [0x37A44, c, us] # st_common
+      # - [0x38EF4, c, us] # e_collect
+      # - [0x3B864, c, us] # e_misc
+      # - [0x3DC00, c, us] # e_stage_name
+      # - [0x3EA54, c, us] # e_particles
+      # - [0x3F298, c, us] # e_room_fg
+      # - [0x3F384, c, us] # popup
+      # - [0x3F6B4, c, us]
+      # - [0x467B4, c, us] # prim_helpers
+      # - [0x46FE4, c, us]
+      - [0x47680, sbss]
+  - [0x48338]

@@ -1,0 +1,62 @@
+options:
+  platform: psx
+  basename: bobo5
+  base_path: ..
+  build_path: build/us
+  target_path: disks/us/BOSS/BO5/BO5.BIN
+  asm_path: asm/us/boss/bo5
+  asset_path: assets/boss/bo5
+  src_path: src/boss/bo5
+  ld_script_path: build/us/bobo5.ld
+  compiler: GCC
+  symbol_addrs_path:
+    - config/symbols.us.txt
+    - config/symbols.us.bobo5.txt
+  undefined_funcs_auto_path: config/undefined_funcs_auto.us.bobo5.txt
+  undefined_syms_auto_path: config/undefined_syms_auto.us.bobo5.txt
+  find_file_boundaries: true
+  use_legacy_include_asm: false
+  migrate_rodata_to_functions: true
+  asm_jtbl_label_macro: jlabel
+  symbol_name_format: us_$VRAM
+  section_order:
+    - .data
+    - .rodata
+    - .text
+    - .bss
+    - .sbss
+  ld_bss_is_noload: false
+  disasm_unknown: true
+  disassemble_all: true
+  global_vram_start: 0x80010000
+sha1: a90ab719a6db9ff6b72ea1a59a09c0cece69c31a
+segments:
+  - name: bobo5
+    type: code
+    start: 0
+    vram:  0x80180000
+    align: 4
+    subalign: 4
+    subsegments:
+      - [0x0, data]
+      - [0x1F568, .rodata, us]
+      - [0x1FAAC, c, us] # e_room_bg
+      # - [0x1FB74, c, us] # e_lock_camera
+      # - [0x1FD30, c, us]
+      # - [0x26BB4, c, us] # st_update
+      # - [0x26FE8, c, us] # collision
+      # - [0x287A4, c, us] # create_entity
+      # - [0x2931C, c, us] # e_red_door
+      # - [0x29FCC, c, us] # st_common
+      # - [0x2B47C, c, us] # e_collect
+      # - [0x2DDE0, c, us] # e_misc
+      # - [0x3017C, c, us] # e_stage_name
+      # - [0x30FD0, c, us] # e_particles
+      # - [0x31814, c, us] # e_room_fg
+      # - [0x31900, c, us] # popup
+      # - [0x31C30, c, us] # prim_helpers
+      # - [0x32460, c, us] # e_life_up
+      # - [0x32D14, c, us] # e_clouds
+      # - [0x33394, c, us]
+      - [0x348C8, sbss]
+  - [0x35630]
