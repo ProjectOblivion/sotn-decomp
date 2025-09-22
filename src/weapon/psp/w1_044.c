@@ -45,9 +45,8 @@ void OVL_EXPORT(Load)(void) {
 }
 
 /*
-extern EntityWeaponAttack;
-extern GetWeaponId;
-extern LoadWeaponPalette;
+void EntityWeaponAttack(Entity* self);
+void LoadWeaponPalette(s32 clutIndex);
 
 Weapon OVL_EXPORT(Overlay) = {
 EntityWeaponAttack,

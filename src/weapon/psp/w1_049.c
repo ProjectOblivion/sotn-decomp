@@ -28,29 +28,21 @@ INCLUDE_ASM("weapon/w1_049_psp/nonmatchings/psp/w1_049", func_ptr_80170014);
 
 int GetWeaponId(void) { return 49; }
 
-void EntityWeaponShieldSpell(void) {
-}
+void EntityWeaponShieldSpell(void) {} 
 
-void func_ptr_80170024(void) {
-}
+void func_ptr_80170024(void) {} 
 
-void func_ptr_80170028(void) {
-}
+void func_ptr_80170028(void) {} 
 
-void WeaponUnused2C(void) {
-}
+void WeaponUnused2C(void) {} 
 
-void WeaponUnused30(void) {
-}
+void WeaponUnused30(void) {} 
 
-void WeaponUnused34(void) {
-}
+void WeaponUnused34(void) {} 
 
-void WeaponUnused38(void) {
-}
+void WeaponUnused38(void) {} 
 
-void WeaponUnused3C(void) {
-}
+void WeaponUnused3C(void) {} 
 
 extern void D_8017D000[];
 #define WEAPON_PTR D_8017D000
@@ -59,9 +51,8 @@ extern Weapon OVL_EXPORT(Overlay);
 void OVL_EXPORT(Load)(void) { memcpy(&WEAPON_PTR, &OVL_EXPORT(Overlay), sizeof(Weapon)); }
 
 /*
-extern EntityWeaponAttack;
-extern GetWeaponId;
-extern LoadWeaponPalette;
+void EntityWeaponAttack(Entity* self);
+void LoadWeaponPalette(s32 clutIndex);
 
 Weapon OVL_EXPORT(Overlay) = {
 EntityWeaponAttack,
