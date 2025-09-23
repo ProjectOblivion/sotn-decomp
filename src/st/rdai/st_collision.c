@@ -1,0 +1,6 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+#include "rdai.h"
+
+INCLUDE_ASM("st/rdai/nonmatchings/st_collision", HitDetection);
+
+INCLUDE_ASM("st/rdai/nonmatchings/st_collision", EntityDamageDisplay);
