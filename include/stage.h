@@ -8,10 +8,37 @@
 #include "objects.h"
 #include "sfx.h"
 
+typedef enum {
+    EXPLOSION_SMALL,
+    EXPLOSION_FIREBALL,
+    EXPLOSION_SMALL_MULTIPLE,
+    EXPLOSION_BIG,
+    EXPLOSION_UNK_4
+} ExplosionTypes;
+
+typedef enum {
+    PLAYER_ON_RIGHT,
+    PLAYER_ON_LEFT,
+    PLAYER_ABOVE,
+} PlayerSideFlags;
+
+typedef enum {
+    COLLISION_NONE = 0,
+    COLLISION_SIDES = 1 << 0,
+    COLLISION_BOTTOM = 1 << 1,
+    COLLISION_TOP = 1 << 2,
+    COLLISION_ANY = COLLISION_SIDES | COLLISION_BOTTOM | COLLISION_TOP
+} CollisionFlags;
+
 // used by InitializeEntity to pre-fill certain entity fields
 // cannot be declared as a struct, field order:
 // animSet, animCurFrame, unk5A, palette, enemyID
 typedef u16 EInit[5];
+
+typedef struct {
+    u8 duration;
+    u8 pose;
+} AnimateEntityFrame;
 
 typedef struct {
     /* 0x0 */ u16 posX;
