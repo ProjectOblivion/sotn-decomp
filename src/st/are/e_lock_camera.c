@@ -1,4 +1,4 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 #include "are.h"
 
-#include "../entity_lock_camera.h"
+INCLUDE_ASM("st/are/nonmatchings/e_lock_camera", ARE_EntityLockCamera);

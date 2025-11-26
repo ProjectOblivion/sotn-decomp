@@ -21,6 +21,6 @@ INCLUDE_ASM("st/are_psp/nonmatchings/are_psp/unk_B2F0", func_pspeu_09244FA0);
 
 INCLUDE_ASM("st/are_psp/nonmatchings/are_psp/unk_B2F0", EntityArmorLord);
 
-INCLUDE_ASM("st/are_psp/nonmatchings/are_psp/unk_B2F0", func_us_801CC660);
+INCLUDE_ASM("st/are_psp/nonmatchings/are_psp/unk_B2F0", func_no1_801D348C);
 
-INCLUDE_ASM("st/are_psp/nonmatchings/are_psp/unk_B2F0", func_us_801CC8D4);
+INCLUDE_ASM("st/are_psp/nonmatchings/are_psp/unk_B2F0", func_no1_801D3700);

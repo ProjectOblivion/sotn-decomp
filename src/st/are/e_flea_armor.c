@@ -2,3 +2,5 @@
 #include "are.h"
 
 INCLUDE_ASM("st/are/nonmatchings/e_flea_armor", EntityFleaArmor);
+
+INCLUDE_ASM("st/are/nonmatchings/e_flea_armor", EntityFleaArmorAttackHitbox);

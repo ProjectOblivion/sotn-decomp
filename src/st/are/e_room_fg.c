@@ -1,4 +1,4 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 #include "are.h"
 
-#include "../e_room_fg.h"
+INCLUDE_ASM("st/are/nonmatchings/e_room_fg", EntityRoomForeground);

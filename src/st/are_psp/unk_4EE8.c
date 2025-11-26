@@ -13,7 +13,7 @@ INCLUDE_ASM("st/are_psp/nonmatchings/are_psp/unk_4EE8", func_pspeu_0923E550);
 
 INCLUDE_ASM("st/are_psp/nonmatchings/are_psp/unk_4EE8", EntityAxeKnightThrowingAxe);
 
-INCLUDE_ASM("st/are_psp/nonmatchings/are_psp/unk_4EE8", func_us_801CA2AC);
+INCLUDE_ASM("st/are_psp/nonmatchings/are_psp/unk_4EE8", func_no1_801CBA30);
 
 INCLUDE_ASM("st/are_psp/nonmatchings/are_psp/unk_4EE8", func_pspeu_0923E918);
 

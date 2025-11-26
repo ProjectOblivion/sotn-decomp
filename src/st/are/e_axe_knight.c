@@ -3,9 +3,9 @@
 
 INCLUDE_ASM("st/are/nonmatchings/e_axe_knight", AxeKnightUnkFunc1);
 
-INCLUDE_ASM("st/are/nonmatchings/e_axe_knight", func_us_801C8D98);
+INCLUDE_ASM("st/are/nonmatchings/e_axe_knight", func_no1_801CA51C);
 
-INCLUDE_ASM("st/are/nonmatchings/e_axe_knight", func_us_801C959C);
+INCLUDE_ASM("st/are/nonmatchings/e_axe_knight", func_no1_801CAD20);
 
 INCLUDE_RODATA("st/are/nonmatchings/e_axe_knight", D_us_801B5648);
 
